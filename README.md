@@ -1,31 +1,60 @@
-# Bacterial Evolutionary Genomics Workflows
+# Bacterial Genomics Workflows
 
-Reproducible workflows for comparative, population and evolutionary genomics of
-bacterial pathogens: from raw reads to pangenomes, phylogenies, pangenome-wide
-association, mobile genetic elements, and the gain and loss of antimicrobial
-resistance (AMR) genes along bacterial phylogenies.
+Reproducible workflows for comparative and population genomics of bacterial
+pathogens, developed for whole-genome sequencing studies of bovine mastitis
+pathogens (*Streptococcus* and *Staphylococcus*) on a shared HPC cluster.
 
-Developed for whole-genome sequencing studies of bovine mastitis pathogens
-(*Streptococcus* and *Staphylococcus*) on a shared HPC cluster.
+## Analyses in this repository
 
-<!-- TODO: add docs/overview.png from amr_gain_loss/ (tree + AMR heatmap + gain/loss events) -->
+### [`pipeline/`](pipeline/): from raw reads to genome-level characterisation
 
-## Contents
-
-| Folder | What it does | Main tools |
+| Step | What it does | Tools |
 |---|---|---|
-| [`pipeline/`](pipeline/) | Modular WGS pipeline: read QC, trimming, assembly, assembly QC, species confirmation, annotation, pangenome, phylogeny, AMR/virulence screening, MGE detection | Trimmomatic, SPAdes, QUAST, Kraken2, FastANI, Prokka, Roary, IQ-TREE, ABRicate |
-| [`pangwas/`](pangwas/) | Pangenome-wide association accounting for population structure, followed by multiple-testing correction and extraction of candidate genes for phylogenetic and synteny analysis | Roary, PanTools, treeWAS, pyseer, Easyfig |
-| [`amr_gain_loss/`](amr_gain_loss/) | Case study on public *Streptococcus suis* genomes: reconstructs the gain and loss of AMR genes on a recombination-aware phylogeny and asks whether gained genes are carried by mobile elements | Panaroo, Gubbins, IQ-TREE, AMRFinderPlus, ancestral state reconstruction |
+| Read QC and trimming | Quality reports, adapter and quality trimming | FastQC, Trimmomatic |
+| Assembly and assembly QC | De novo assembly, contiguity and completeness checks, filtering of poor assemblies | SPAdes, QUAST |
+| Taxonomic and species confirmation | Read- and assembly-level classification; species confirmation by average nucleotide identity to a reference | Kraken2, FastANI |
+| Annotation | Gene prediction and functional annotation | Prokka |
+| Pangenome | Core and accessory genome, gene presence/absence matrix | Roary |
+| Phylogeny | Core-genome alignment and maximum-likelihood tree | IQ-TREE |
+| AMR and virulence | Screening for antimicrobial resistance and virulence factor genes | ABRicate (CARD, ResFinder, VFDB) |
+| Mobile genetic elements | Detection and summary of MGEs and their gene content | MGE detection + custom Python summary |
 
-<!-- TODO: remove the amr_gain_loss row if it is not finished before the repo goes public -->
+### [`pangwas/`](pangwas/): linking accessory genes to phenotype
+
+| Step | What it does | Tools |
+|---|---|---|
+| Pangenome construction | Gene presence/absence across isolates | Roary, PanTools |
+| Association testing | Pangenome-wide association accounting for population structure | treeWAS, pyseer |
+| Multiple testing | False discovery rate correction of association results | Python |
+| Follow-up | Gene extraction for phylogenetic analysis; tree and synteny visualisation | Python, Easyfig |
+
+## Other experience (code private until publication)
+
+Ongoing projects, with manuscripts in preparation, use the following approaches.
+Code is available on request.
+
+- **Prophages and integrases:** prophage detection and boundary refinement,
+  attachment-site discovery, integrase typing, phage taxonomy and phylogeny
+  (vclust, taxMyPhage, ANI- and protein-based trees)
+- **Between-species sharing of mobile elements:** BLASTn/tBLASTx homology searches
+  against multi-species reference databases with normalised homology scoring
+- **CRISPR–phage interactions:** CRISPR array detection, spacer–protospacer mapping
+  and linking spacer targets to prophage modules (MinCED)
+- **Cargo gene analysis:** functional, metabolic, AMR and virulence genes carried by
+  mobile elements; defence systems such as abortive infection
+- **Genotyping:** cgMLST/wgMLST schemes and minimum spanning trees (chewBBACA, GrapeTree)
+- **Comparative datasets and statistics:** automated retrieval and curation of public
+  genomes and metadata (NCBI Datasets, Entrez, PubMLST), deduplication, ecological
+  and geographic comparisons (Wilcoxon tests), interactive visualisation (Microreact)
+- **Functional enrichment:** KEGG pathway enrichment across experimental groups
+  (eggNOG-mapper, TBtools)
 
 ## Design principles
 
 - **Plain, stepwise scripts.** Each step is a short bash, Python or R script with
   timestamped logging, so it can be read, rerun and debugged on a shared cluster.
 - **Offline by default.** Tools run locally; no sequences are uploaded to public servers.
-- **One conda environment per tool group**, listed in `envs/`.
+- **One conda environment per tool group.**
 - **No hard-coded paths.** Paths and thread counts are set in a config file.
 
 ## Quick start
@@ -37,26 +66,19 @@ cp config/config.example.sh config/config.sh     # edit paths here
 bash pipeline/main_pipeline.sh
 ```
 
-Each folder has its own README describing inputs, outputs and how to run it.
-
-## Ongoing work
-
-Code for ongoing projects on prophage integrase diversity, CRISPR–phage
-interactions and between-species sharing of mobile elements in *Streptococcus*
-(manuscripts in preparation) is kept private until publication and is available
-on request.
-
 ## Development notes
 
-<!-- TODO: adjust so it matches which parts you wrote yourself -->
-The `pipeline/` modules were written by me. Later analyses were developed with the
-assistance of an AI coding tool (Claude, Anthropic). In all cases I designed the
-analyses, chose the methods and thresholds, ran and debugged the code on our HPC
-cluster, validated the outputs, and interpreted the results.
+Parts of this code were developed with the assistance of an AI coding tool
+(Claude, Anthropic). In all cases I designed the analyses, chose the methods and
+thresholds, ran and debugged the code on our HPC cluster, validated the outputs,
+and interpreted the results.
 
 ## Author
 
-<!-- TODO: name, affiliation, ORCID, contact -->
+**Anyaphat Srithanasuwan** · ORCID [0000-0003-2837-7187](https://orcid.org/0000-0003-2837-7187)
+
+- Infectious Disease Epidemiology, Wageningen University, Wageningen, The Netherlands
+- SYNGEN Co., Ltd., Chiang Mai, Thailand
 
 ## License
 
