@@ -1,0 +1,39 @@
+# Sequence and alignment data: never commit
+*.fastq
+*.fq
+*.fastq.gz
+*.fq.gz
+*.fasta
+*.fa
+*.fna
+*.faa
+*.ffn
+*.gbk
+*.gff
+*.bam
+*.sam
+*.vcf
+*.vcf.gz
+*.aln
+
+# Results and databases
+results/
+output*/
+databases/
+*_db/
+*.k2d
+
+# Local config with real paths
+config/config.sh
+
+# HPC and tool clutter
+slurm-*.out
+*.log
+.snakemake/
+__pycache__/
+.ipynb_checkpoints/
+.Rhistory
+.RData
+
+# Local staging for files still being curated
+_review/
